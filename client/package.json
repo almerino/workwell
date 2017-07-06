@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "leaflet": "^1.1.0",
+    "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-leaflet": "^1.4.0",
     "react-scripts": "1.0.10"
   },
   "scripts": {
@@ -12,5 +15,8 @@
     "build": "REACT_APP_GRAPHQL_ENDPOINT=${REACT_APP_GRAPHQL_ENDPOINT:=https://api.graph.cool/simple/v1/cj4spe9mgnges0179f9uoo03a} react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "material-ui": "next"
   }
 }
