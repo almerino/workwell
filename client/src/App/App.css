@@ -1,27 +1,19 @@
-.App {
-  display: flex;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-map {
-  font-size: large;
-  overflow: hidden;
-}
-
 .leaflet-container {
   height: 100vh;
   width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.content {
+  display: flex;
+}
+
+.left-menu {
+  background-color: white;
+  border-right: 1px solid grey;
+  min-width: 300px;
+}
+
+.map {
+  font-size: large;
+  overflow: hidden;
 }

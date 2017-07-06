@@ -5,10 +5,12 @@
   "dependencies": {
     "d3": "^4.9.1",
     "leaflet": "^1.1.0",
+    "material-ui": "next",
     "material-ui-icons": "^1.0.0-alpha.19",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-geosuggest": "^2.3.4",
     "react-leaflet": "^1.4.0",
     "react-scripts": "1.0.10"
   },
@@ -18,7 +20,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "material-ui": "next"
-  }
+  "devDependencies": {}
 }
