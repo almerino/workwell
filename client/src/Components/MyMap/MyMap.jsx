@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import L from "leaflet";
 import * as d3 from "d3";
+import "leaflet/dist/leaflet.css";
 
 class MyMap extends Component {
   constructor(props) {
@@ -8,12 +9,16 @@ class MyMap extends Component {
   }
 
   componentDidMount() {
-    const map = L.map("map").setView([48.864716, 2.349014], 13);
+    const map = L.map("map", { zoomControl: false }).setView(
+      [48.864716, 2.349014],
+      13
+    );
     const mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; " + mapLink + " Contributors",
       maxZoom: 18
     }).addTo(map);
+    L.control.zoom({ position: "bottomright" }).addTo(map);
     L.svg().addTo(map);
 
     /* We simply pick up the SVG from the map object */

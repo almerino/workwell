@@ -1,19 +1,20 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+}
 .leaflet-container {
   height: 100vh;
   width: 100%;
 }
 
 .content {
-  display: flex;
-}
-
-.left-menu {
-  background-color: white;
-  border-right: 1px solid grey;
-  min-width: 300px;
+  /*display: flex;*/
 }
 
 .map {
-  font-size: large;
   overflow: hidden;
+}
+
+.menu {
+  background-color: transparent;
 }
