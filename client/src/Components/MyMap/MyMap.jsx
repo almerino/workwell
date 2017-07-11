@@ -8,57 +8,96 @@ class MyMap extends Component {
     super(props);
   }
 
+  componentWillUpdate({ cities }) {
+    const self = this;
+
+    console.log(cities);
+
+    cities.forEach(function(d) {
+      d.LatLng = new L.LatLng(d.location.lat, d.location.lng);
+      self.bounds.extend(d.LatLng);
+    });
+
+    const feature = self.g
+      .selectAll("circle")
+      .data(cities)
+      .enter()
+      .append("circle")
+      .style("stroke", "black")
+      .style("opacity", 0.6)
+      .style("fill", "red")
+      .attr("r", 20);
+
+    self.map.on("viewreset", update);
+    self.map.fitBounds(self.bounds);
+    update();
+
+    function update() {
+      feature.attr("transform", function(d) {
+        return (
+          "translate(" +
+          self.map.latLngToLayerPoint(d.LatLng).x +
+          "," +
+          self.map.latLngToLayerPoint(d.LatLng).y +
+          ")"
+        );
+      });
+    }
+  }
+
   componentDidMount() {
-    const map = L.map("map", { zoomControl: false }).setView(
+    this.map = L.map("map", { zoomControl: false }).setView(
       [48.864716, 2.349014],
       13
     );
-    const mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    this.mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; " + mapLink + " Contributors",
+      attribution: "&copy; " + this.mapLink + " Contributors",
       maxZoom: 18
-    }).addTo(map);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.svg().addTo(map);
+    }).addTo(this.map);
+    L.control.zoom({ position: "bottomright" }).addTo(this.map);
+    L.svg().addTo(this.map);
 
     /* We simply pick up the SVG from the map object */
-    const svg = d3.select("#map").select("svg"),
-      g = svg.append("g");
+    this.svg = d3.select("#map").select("svg");
+    this.g = this.svg.append("g");
 
-    d3.json("circles.json", function(collection) {
-      /* Add a LatLng object to each item in the dataset */
-      collection.objects.forEach(function(d) {
-        d.LatLng = new L.LatLng(
-          d.circle.coordinates[0],
-          d.circle.coordinates[1]
-        );
-      });
+    this.bounds = new L.LatLngBounds();
 
-      const feature = g
-        .selectAll("circle")
-        .data(collection.objects)
-        .enter()
-        .append("circle")
-        .style("stroke", "black")
-        .style("opacity", 0.6)
-        .style("fill", "red")
-        .attr("r", 20);
+    // d3.json("circles.json", function(collection) {
+    //   /* Add a LatLng object to each item in the dataset */
+    //   collection.objects.forEach(function(d) {
+    //     d.LatLng = new L.LatLng(
+    //       d.circle.coordinates[0],
+    //       d.circle.coordinates[1]
+    //     );
+    //   });
 
-      map.on("viewreset", update);
-      update();
+    //   const feature = g
+    //     .selectAll("circle")
+    //     .data(collection.objects)
+    //     .enter()
+    //     .append("circle")
+    //     .style("stroke", "black")
+    //     .style("opacity", 0.6)
+    //     .style("fill", "red")
+    //     .attr("r", 20);
 
-      function update() {
-        feature.attr("transform", function(d) {
-          return (
-            "translate(" +
-            map.latLngToLayerPoint(d.LatLng).x +
-            "," +
-            map.latLngToLayerPoint(d.LatLng).y +
-            ")"
-          );
-        });
-      }
-    });
+    //   map.on("viewreset", update);
+    //   update();
+
+    //   function update() {
+    //     feature.attr("transform", function(d) {
+    //       return (
+    //         "translate(" +
+    //         map.latLngToLayerPoint(d.LatLng).x +
+    //         "," +
+    //         map.latLngToLayerPoint(d.LatLng).y +
+    //         ")"
+    //       );
+    //     });
+    //   }
+    // });
   }
 
   render() {

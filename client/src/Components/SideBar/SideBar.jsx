@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Geosuggest from "react-geosuggest";
 import Paper from "material-ui/Paper";
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
@@ -7,8 +9,6 @@ import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
 import Search from "../Search/Search";
 import "./SideBar.css";
-
-import Geosuggest from "react-geosuggest";
 
 function renderSuggestItem(suggest) {
   return (
@@ -46,6 +46,7 @@ class SideBar extends Component {
     console.log(suggest);
     if (!this.state.cities.some(city => city.placeId === suggest.placeId)) {
       this.setState({ cities: [...this.state.cities, suggest] });
+      this.props.addToMap(this.state.cities);
       this._geoSuggest.clear();
     } else {
       // push notif to say it already exists
@@ -78,5 +79,9 @@ class SideBar extends Component {
     );
   }
 }
+
+SideBar.propTypes = {
+  addToMap: PropTypes.func.isRequired
+};
 
 export default SideBar;
