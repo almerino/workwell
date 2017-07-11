@@ -51,7 +51,7 @@ class MyMap extends Component {
       13
     );
     this.mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
-    L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; " + this.mapLink + " Contributors",
       maxZoom: 18
     }).addTo(this.map);
