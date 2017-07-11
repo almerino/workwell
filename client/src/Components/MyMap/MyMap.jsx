@@ -11,8 +11,6 @@ class MyMap extends Component {
   componentWillUpdate({ cities }) {
     const self = this;
 
-    console.log(cities);
-
     cities.forEach(function(d) {
       d.LatLng = new L.LatLng(d.location.lat, d.location.lng);
       self.bounds.extend(d.LatLng);
@@ -30,6 +28,7 @@ class MyMap extends Component {
 
     self.map.on("viewreset", update);
     self.map.fitBounds(self.bounds);
+
     update();
 
     function update() {
@@ -50,13 +49,15 @@ class MyMap extends Component {
       [48.864716, 2.349014],
       13
     );
+
     this.mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; " + this.mapLink + " Contributors",
-      maxZoom: 18
+      maxZoom: 14
     }).addTo(this.map);
     L.control.zoom({ position: "bottomright" }).addTo(this.map);
-    L.svg().addTo(this.map);
+    // L.svg().addTo(this.map);
+    this.map._initPathRoot();
 
     /* We simply pick up the SVG from the map object */
     this.svg = d3.select("#map").select("svg");

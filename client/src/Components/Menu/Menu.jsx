@@ -12,7 +12,6 @@ import CloseIcon from "material-ui-icons/Close";
 import "./Menu.css";
 
 function renderSuggestItem(suggest) {
-  console.log("hello");
   return (
     <span className="geosuggest__suggested-item">
       <span>
