@@ -1,24 +1,30 @@
 import React from "react";
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import { withStyles, createStyleSheet } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Divider from "material-ui/Divider";
 import IconButton from "material-ui/IconButton";
 import DeleteIcon from "material-ui-icons/Delete";
+import { LinearProgress } from "material-ui/Progress";
 import "./SideList.css";
 
-function SideList({ list }) {
+function SideList({ data }) {
+  if (data.loading) {
+    return <LinearProgress mode="query" />;
+  }
+
   return (
     <div>
       <AppBar position="static" className="app-bar">
         {"My cities"}
       </AppBar>
       <List className="list" disablePadding>
-        {list &&
-          list.map(item =>
-            <div key={item.placeId}>
+        {data.cities &&
+          data.cities.map(city =>
+            <div key={city.placeId}>
               <ListItem dense button>
-                <ListItemText primary={item.description} />
+                <ListItemText primary={city.description} />
                 <ListItemIcon>
                   <IconButton aria-label="Delete">
                     <DeleteIcon />
@@ -33,4 +39,16 @@ function SideList({ list }) {
   );
 }
 
-export default SideList;
+export const citiesQuery = gql`
+  query {
+    cities: allCities {
+      id
+      placeId
+      description
+    }
+  }
+`;
+
+export const SimpleSideList = SideList;
+
+export default graphql(citiesQuery)(SideList);
