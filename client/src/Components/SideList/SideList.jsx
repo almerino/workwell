@@ -5,32 +5,19 @@ import AppBar from "material-ui/AppBar";
 import Divider from "material-ui/Divider";
 import IconButton from "material-ui/IconButton";
 import DeleteIcon from "material-ui-icons/Delete";
+import "./SideList.css";
 
-const styleSheet = createStyleSheet("UndockedDrawer", {
-  list: {
-    width: 350,
-    flex: "initial"
-  },
-  listFull: {
-    width: "auto",
-    flex: "initial"
-  },
-  appBar: {
-    padding: 20
-  }
-});
-
-function SideList({ classes, list }) {
+function SideList({ list }) {
   return (
     <div>
-      <AppBar position="static" className={classes.appBar}>
+      <AppBar position="static" className="app-bar">
         {"My cities"}
       </AppBar>
-      <List className={classes.list} disablePadding>
+      <List className="list" disablePadding>
         {list &&
           list.map(item =>
-            <div>
-              <ListItem dense button key={item.placeId}>
+            <div key={item.placeId}>
+              <ListItem dense button>
                 <ListItemText primary={item.description} />
                 <ListItemIcon>
                   <IconButton aria-label="Delete">
@@ -46,4 +33,4 @@ function SideList({ classes, list }) {
   );
 }
 
-export default withStyles(styleSheet)(SideList);
+export default SideList;

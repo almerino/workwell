@@ -6,26 +6,17 @@ import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";
+import "./AppBar.css";
 
-const styleSheet = createStyleSheet("ButtonAppBar", {
-  root: {
-    width: "100%"
-  },
-  flex: {
-    flex: 1
-  }
-});
-
-function ButtonAppBar(props) {
-  const classes = props.classes;
+function ButtonAppBar() {
   return (
-    <div className={classes.root}>
+    <div className="root">
       <AppBar position="static">
         <Toolbar>
           <IconButton color="contrast" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <Typography type="title" color="inherit" className={classes.flex}>
+          <Typography type="title" color="inherit" className="flex">
             NeverEatAlone
           </Typography>
         </Toolbar>
@@ -34,8 +25,4 @@ function ButtonAppBar(props) {
   );
 }
 
-ButtonAppBar.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styleSheet)(ButtonAppBar);
+export default ButtonAppBar;
