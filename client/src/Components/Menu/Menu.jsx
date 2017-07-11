@@ -7,10 +7,12 @@ import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";
 import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
-import Search from "../Search/Search";
-import "./SideBar.css";
+import Snackbar from "material-ui/Snackbar";
+import CloseIcon from "material-ui-icons/Close";
+import "./Menu.css";
 
 function renderSuggestItem(suggest) {
+  console.log("hello");
   return (
     <span className="geosuggest__suggested-item">
       <span>
@@ -25,13 +27,14 @@ function renderSuggestItem(suggest) {
   );
 }
 
-class SideBar extends Component {
+class Menu extends Component {
   constructor(props) {
     super(props);
-    this.state = { open: false, cities: [] };
+    this.state = { open: false, cities: [], snackbarOpen: false };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.onSuggestSelect = this.onSuggestSelect.bind(this);
+    this.handleRequestClose = this.handleRequestClose.bind(this);
   }
 
   handleOpen() {
@@ -42,15 +45,30 @@ class SideBar extends Component {
     this.setState({ open: false });
   }
 
+  handleRequestClose() {
+    this.setState({ snackbarOpen: false });
+  }
+
   onSuggestSelect(suggest) {
-    console.log(suggest);
     if (!this.state.cities.some(city => city.placeId === suggest.placeId)) {
-      this.setState({ cities: [...this.state.cities, suggest] });
+      this.setState({
+        cities: [...this.state.cities, suggest],
+        message: `${suggest.label} has been added to the list.`,
+        snackbarOpen: true
+      });
       this.props.addToMap(this.state.cities);
       this._geoSuggest.clear();
     } else {
-      // push notif to say it already exists
+      this.setState({
+        message: `${suggest.label} is already in the list.`,
+        snackbarOpen: true
+      });
+      this._geoSuggest.clear();
     }
+
+    // hack due to bug in react-geosuggest
+    // https://github.com/ubilabs/react-geosuggest/issues/327
+    this._geoSuggest.blur();
   }
 
   render() {
@@ -75,13 +93,41 @@ class SideBar extends Component {
         <Drawer open={this.state.open} onRequestClose={this.handleClose}>
           <SideList list={this.state.cities} />
         </Drawer>
+
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackbarOpen}
+          autoHideDuration={6e3}
+          onRequestClose={this.handleRequestClose}
+          SnackbarContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={
+            <span id="message-id">
+              {this.state.message}
+            </span>
+          }
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.handleRequestClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
       </div>
     );
   }
 }
 
-SideBar.propTypes = {
+Menu.propTypes = {
   addToMap: PropTypes.func.isRequired
 };
 
-export default SideBar;
+export default Menu;

@@ -6,8 +6,6 @@ import Divider from "material-ui/Divider";
 import IconButton from "material-ui/IconButton";
 import DeleteIcon from "material-ui-icons/Delete";
 
-import Tabs, { Tab } from "material-ui/Tabs";
-
 const styleSheet = createStyleSheet("UndockedDrawer", {
   list: {
     width: 350,

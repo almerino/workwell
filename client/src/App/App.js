@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import MyMap from "../Components/MyMap/MyMap";
-import SideBar from "../Components/SideBar/SideBar";
-import logo from "./logo.svg";
+import Menu from "../Components/Menu/Menu";
 import "./App.css";
 
 class App extends Component {
@@ -19,7 +18,7 @@ class App extends Component {
     return (
       <div className="app">
         <div className="content">
-          <SideBar addToMap={this.addToMap} />
+          <Menu addToMap={this.addToMap} />
           <div className="map">
             <MyMap cities={this.state.cities} />
           </div>
