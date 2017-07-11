@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
 import Geosuggest from "react-geosuggest";
 import Paper from "material-ui/Paper";
 import Drawer from "material-ui/Drawer";
@@ -9,6 +11,7 @@ import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
 import Snackbar from "material-ui/Snackbar";
 import CloseIcon from "material-ui-icons/Close";
+import { citiesQuery } from "../MyMap/MyMap";
 import "./Menu.css";
 
 function renderSuggestItem(suggest) {
@@ -58,12 +61,30 @@ class Menu extends Component {
     } else if (
       !this.state.cities.some(city => city.placeId === suggest.placeId)
     ) {
-      this.setState({
-        cities: [...this.state.cities, suggest],
-        message: `${suggest.label} has been added to the list.`,
-        snackbarOpen: true
-      });
-      this.props.addToMap(this.state.cities);
+      const variables = {
+        placeId: suggest.placeId,
+        description: suggest.description,
+        lat: suggest.location.lat,
+        lng: suggest.location.lng
+      };
+
+      this.props
+        .createCity({ variables })
+        .then(response => {
+          this.setState({
+            cities: [...this.state.cities, suggest],
+            message: `${suggest.label} has been added to the list.`,
+            snackbarOpen: true
+          });
+          // this.props.addToMap(this.state.cities);
+        })
+        .catch(e => {
+          this.setState({
+            message: `Error while adding the city.`,
+            snackbarOpen: true
+          });
+        });
+
       this._geoSuggest.clear();
     } else {
       this.setState({
@@ -98,7 +119,7 @@ class Menu extends Component {
           />
         </Paper>
         <Drawer open={this.state.open} onRequestClose={this.handleClose}>
-          <SideList list={this.state.cities} />
+          <SideList />
         </Drawer>
 
         <Snackbar
@@ -133,8 +154,44 @@ class Menu extends Component {
   }
 }
 
+const CreateCityQuery = gql`
+  mutation createCity(
+    $placeId: String!
+    $description: String!
+    $lat: Float!
+    $lng: Float!
+  ) {
+    city: createCity(
+      placeId: $placeId
+      description: $description
+      lat: $lat
+      lng: $lng
+    ) {
+      id
+      placeId
+      description
+      lat
+      lng
+    }
+  }
+`;
+
 Menu.propTypes = {
   addToMap: PropTypes.func.isRequired
 };
 
-export default Menu;
+export const SimpleMenu = Menu;
+
+export default graphql(CreateCityQuery, {
+  name: "createCity",
+  options: {
+    update: (store, { data: { city } }) => {
+      // Read the data from our cache for this query.
+      const data = store.readQuery({ query: citiesQuery });
+      // Add our comment from the mutation to the end.
+      data.cities.push(city);
+      // Write our data back to the cache.
+      store.writeQuery({ query: citiesQuery, data });
+    }
+  }
+})(Menu);

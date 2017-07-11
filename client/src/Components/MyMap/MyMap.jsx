@@ -1,42 +1,53 @@
 import React, { Component } from "react";
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
 import L from "leaflet";
 import * as d3 from "d3";
 import "leaflet/dist/leaflet.css";
 
 class MyMap extends Component {
-  componentWillUpdate({ cities }) {
-    const self = this;
+  componentWillUpdate({ data }) {
+    if (data.cities) {
+      const self = this;
+      const cities = [];
 
-    cities.forEach(function(d) {
-      d.LatLng = new L.LatLng(d.location.lat, d.location.lng);
-      self.bounds.extend(d.LatLng);
-    });
+      d3.select("g").remove();
+      this.g = this.svg.append("g");
 
-    const feature = self.g
-      .selectAll("circle")
-      .data(cities)
-      .enter()
-      .append("circle")
-      .style("stroke", "black")
-      .style("opacity", 0.6)
-      .style("fill", "red")
-      .attr("r", 20);
+      if (data.cities.length) {
+        data.cities.forEach(function(d) {
+          const city = { ...d, LatLng: new L.LatLng(d.lat, d.lng) };
+          cities.push(city);
+          self.bounds.extend(city.LatLng);
+        });
 
-    self.map.on("viewreset", update);
-    self.map.fitBounds(self.bounds);
+        const feature = self.g
+          .selectAll("circle")
+          .data(cities)
+          .enter()
+          .append("circle")
+          .style("stroke", "black")
+          .style("opacity", 0.6)
+          .style("fill", "red")
+          .attr("r", 20);
 
-    update();
+        self.map.on("viewreset", update);
+        self.map.fitBounds(self.bounds);
 
-    function update() {
-      feature.attr("transform", function(d) {
-        return (
-          "translate(" +
-          self.map.latLngToLayerPoint(d.LatLng).x +
-          "," +
-          self.map.latLngToLayerPoint(d.LatLng).y +
-          ")"
-        );
-      });
+        update();
+
+        function update() {
+          feature.attr("transform", function(d) {
+            return (
+              "translate(" +
+              self.map.latLngToLayerPoint(d.LatLng).x +
+              "," +
+              self.map.latLngToLayerPoint(d.LatLng).y +
+              ")"
+            );
+          });
+        }
+      }
     }
   }
 
@@ -67,4 +78,18 @@ class MyMap extends Component {
   }
 }
 
-export default MyMap;
+export const citiesQuery = gql`
+  query CitiesQuery {
+    cities: allCities {
+      id
+      placeId
+      description
+      lat
+      lng
+    }
+  }
+`;
+
+export const SimpleMap = MyMap;
+
+export default graphql(citiesQuery)(MyMap);
