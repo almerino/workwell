@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { graphql } from "react-apollo";
 import gql from "graphql-tag";
 import Geosuggest from "react-geosuggest";
@@ -32,7 +31,7 @@ function renderSuggestItem(suggest) {
 class Menu extends Component {
   constructor(props) {
     super(props);
-    this.state = { open: false, cities: [], snackbarOpen: false };
+    this.state = { open: false, snackbarOpen: false };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.onSuggestSelect = this.onSuggestSelect.bind(this);
@@ -59,7 +58,7 @@ class Menu extends Component {
       });
       this._geoSuggest.clear();
     } else if (
-      !this.state.cities.some(city => city.placeId === suggest.placeId)
+      !this.props.data.cities.some(city => city.placeId === suggest.placeId)
     ) {
       const variables = {
         placeId: suggest.placeId,
@@ -72,11 +71,9 @@ class Menu extends Component {
         .createCity({ variables })
         .then(response => {
           this.setState({
-            cities: [...this.state.cities, suggest],
             message: `${suggest.label} has been added to the list.`,
             snackbarOpen: true
           });
-          // this.props.addToMap(this.state.cities);
         })
         .catch(e => {
           this.setState({
@@ -176,9 +173,7 @@ const CreateCityQuery = gql`
   }
 `;
 
-Menu.propTypes = {
-  addToMap: PropTypes.func.isRequired
-};
+Menu.propTypes = {};
 
 export const SimpleMenu = Menu;
 
@@ -194,4 +189,4 @@ export default graphql(CreateCityQuery, {
       store.writeQuery({ query: citiesQuery, data });
     }
   }
-})(Menu);
+})(graphql(citiesQuery)(Menu));
