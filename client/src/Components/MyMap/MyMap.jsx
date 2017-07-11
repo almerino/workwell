@@ -4,10 +4,6 @@ import * as d3 from "d3";
 import "leaflet/dist/leaflet.css";
 
 class MyMap extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentWillUpdate({ cities }) {
     const self = this;
 

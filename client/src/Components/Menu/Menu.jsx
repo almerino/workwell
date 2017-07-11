@@ -49,7 +49,15 @@ class Menu extends Component {
   }
 
   onSuggestSelect(suggest) {
-    if (!this.state.cities.some(city => city.placeId === suggest.placeId)) {
+    if (suggest.placeId === undefined) {
+      this.setState({
+        message: `${suggest.label} doesn't exist.`,
+        snackbarOpen: true
+      });
+      this._geoSuggest.clear();
+    } else if (
+      !this.state.cities.some(city => city.placeId === suggest.placeId)
+    ) {
       this.setState({
         cities: [...this.state.cities, suggest],
         message: `${suggest.label} has been added to the list.`,
