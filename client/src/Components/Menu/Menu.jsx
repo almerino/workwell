@@ -10,7 +10,7 @@ import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
 import Snackbar from "material-ui/Snackbar";
 import CloseIcon from "material-ui-icons/Close";
-import { citiesQuery } from "../MyMap/MyMap";
+import citiesQuery from "../../GraphQL/Queries/citiesQuery";
 import "./Menu.css";
 
 function renderSuggestItem(suggest) {

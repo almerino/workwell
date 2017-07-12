@@ -1,12 +1,15 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { graphql } from "react-apollo";
-import gql from "graphql-tag";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import AppBar from "material-ui/AppBar";
 import Divider from "material-ui/Divider";
 import IconButton from "material-ui/IconButton";
 import DeleteIcon from "material-ui-icons/Delete";
 import { LinearProgress } from "material-ui/Progress";
+import CityShape from "../../Shapes/CityShape";
+import citiesQuery from "../../GraphQL/Queries/citiesQuery";
+import deleteCityMutation from "../../GraphQL/Mutations/deleteCityMutation";
 import "./SideList.css";
 
 class SideList extends Component {
@@ -20,9 +23,7 @@ class SideList extends Component {
       id
     };
 
-    this.props.deleteCity({ variables }).then().catch(e => {
-      console.log(e);
-    });
+    this.props.deleteCity({ variables }).then();
   }
 
   render() {
@@ -63,30 +64,17 @@ class SideList extends Component {
   }
 }
 
-export const citiesQuery = gql`
-  query CitiesQuery {
-    cities: allCities {
-      id
-      placeId
-      description
-      lat
-      lng
-    }
-  }
-`;
-
-const deleteCityQuery = gql`
-  mutation DeleteCity($id: ID!) {
-    deletedCity: deleteCity(id: $id) {
-      id
-    }
-  }
-`;
+SideList.propTypes = {
+  data: PropTypes.shape({
+    loading: PropTypes.bool.isRequired,
+    cities: PropTypes.arrayOf(CityShape)
+  })
+};
 
 export const SimpleSideList = SideList;
 
 export default graphql(citiesQuery)(
-  graphql(deleteCityQuery, {
+  graphql(deleteCityMutation, {
     name: "deleteCity",
     options: {
       update: (store, { data: { deletedCity } }) => {

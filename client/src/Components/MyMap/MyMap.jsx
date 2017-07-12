@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { graphql } from "react-apollo";
-import gql from "graphql-tag";
 import L from "leaflet";
 import * as d3 from "d3";
+import CityShape from "../../Shapes/CityShape";
+import citiesQuery from "../../GraphQL/Queries/citiesQuery";
 import "leaflet/dist/leaflet.css";
 
 class MyMap extends Component {
@@ -10,23 +12,23 @@ class MyMap extends Component {
     super(props);
     this.state = { cities: [] };
     this.addToMap = this.addToMap.bind(this);
+    window.d3 = d3;
   }
 
   componentWillReceiveProps({ data }) {
-    if (!data.loading && data.cities.length) {
+    if (!data.loading) {
       this.setState({
-        cities: data.cities
+        cities: data.cities || []
       });
     }
   }
 
   addToMap(cities) {
-    if (cities && cities.length) {
+    if (cities) {
       const self = this;
       const newCities = [];
 
-      d3.selectAll("g").remove();
-      self.g = self.svg.append("g");
+      self.g.selectAll("circle").remove();
 
       cities.forEach(function(d) {
         const city = { ...d, LatLng: new L.LatLng(d.lat, d.lng) };
@@ -45,7 +47,9 @@ class MyMap extends Component {
         .attr("r", 20);
 
       self.map.on("moveend", update);
-      self.map.fitBounds(self.bounds);
+      if (newCities.length) {
+        self.map.fitBounds(self.bounds);
+      }
 
       update();
 
@@ -91,17 +95,12 @@ class MyMap extends Component {
   }
 }
 
-export const citiesQuery = gql`
-  query CitiesQuery {
-    cities: allCities {
-      id
-      placeId
-      description
-      lat
-      lng
-    }
-  }
-`;
+MyMap.propTypes = {
+  data: PropTypes.shape({
+    loading: PropTypes.bool.isRequired,
+    cities: PropTypes.arrayOf(CityShape)
+  })
+};
 
 export const SimpleMap = MyMap;
 
