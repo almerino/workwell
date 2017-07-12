@@ -62,10 +62,7 @@ class Menu extends Component {
           });
         })
         .catch(e => {
-          this.setState({
-            message: `Error while adding the city.`,
-            snackbarOpen: true
-          });
+          console.log(e);
         });
 
       this._geoSuggest.clear();

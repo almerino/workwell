@@ -2,6 +2,8 @@ import React from "react";
 import { shallow } from "enzyme";
 import { MockedProvider } from "react-apollo/lib/test-utils";
 import Menu, { SimpleMenu } from "./Menu";
+import GeoSuggestItem from "../GeoSuggestItem/GeoSuggestItem";
+import SideList from "../SideList/SideList";
 import citiesQuery from "../../GraphQL/Queries/citiesQuery";
 
 const props = {
@@ -38,26 +40,115 @@ describe("Menu", () => {
     expect(menu.prop("data")).toEqual(props.data);
   });
 
-  // it("renders SimpleComposers ", () => {
-  //   const wrapper = shallow(<SimpleComposers {...props} />);
-  //   const instance = wrapper.renderer._instance._instance;
+  it("has elements", () => {
+    const wrapper = shallow(<SimpleMenu {...props} />);
+    const instance = wrapper.renderer._instance._instance;
 
-  //   expect(wrapper.find("withStyles(Typography)")).toHaveLength(1);
-  //   expect(wrapper.find("withStyles(Typography)").prop("children")).toBe(
-  //     "Composers"
-  //   );
+    expect(wrapper.find("withStyles(Paper)").prop("className")).toBe("menu");
+    expect(wrapper.find("pure(Menu)")).toHaveLength(1);
 
-  //   expect(wrapper.find("withStyles(Paper)")).toHaveLength(1);
-  //   expect(wrapper.find("withStyles(List)")).toHaveLength(1);
-  //   expect(wrapper.find("Link")).toHaveLength(1);
-  //   expect(wrapper.find("Link").prop("to")).toBe("/article/composers/1");
-  //   expect(wrapper.find("withStyles(ListItem)")).toHaveLength(1);
-  //   expect(wrapper.find("withStyles(Avatar)").props()).toEqual({
-  //     alt: "name",
-  //     src: "image"
-  //   });
+    let IconButton = wrapper.find("withStyles(IconButton)");
+    expect(IconButton.prop("onClick")).toBe(
+      wrapper.renderer._instance._instance.handleOpen
+    );
+    instance.handleOpen();
+    expect(instance.state.open).toBe(true);
 
-  //   expect(wrapper.find("withStyles(ListItemText)")).toHaveLength(1);
-  //   expect(wrapper.find("withStyles(ListItemText)").prop("primary")).toBe("name");
-  // });
+    expect(wrapper.find(SideList)).toHaveLength(1);
+    expect(wrapper.find("withStyles(Snackbar)")).toHaveLength(1);
+  });
+
+  it("has geosuggest rightly configured", () => {
+    const wrapper = shallow(<SimpleMenu {...props} />);
+
+    const geosuggest = wrapper.find("Geosuggest");
+    expect(geosuggest).toHaveLength(1);
+    expect(geosuggest.prop("types")).toEqual(["(cities)"]);
+    expect(geosuggest.prop("renderSuggestItem")).toBe(GeoSuggestItem);
+    expect(geosuggest.prop("onSuggestSelect")).toBe(
+      wrapper.renderer._instance._instance.onSuggestSelect
+    );
+  });
+
+  it("has a drawer rightly configured", () => {
+    const wrapper = shallow(<SimpleMenu {...props} />);
+    const instance = wrapper.renderer._instance._instance;
+
+    const drawer = wrapper.find("withStyles(Drawer)");
+
+    expect(drawer).toHaveLength(1);
+    expect(drawer.prop("open")).toBe(false);
+    instance.handleOpen();
+    expect(wrapper.find("withStyles(Drawer)").prop("open")).toBe(true);
+    instance.handleClose();
+    expect(wrapper.find("withStyles(Drawer)").prop("open")).toBe(false);
+  });
+
+  it("onSuggestSelect tests when none exists", () => {
+    const createCity = jest.fn().mockReturnValue(Promise.resolve(true));
+
+    const wrapper = shallow(<SimpleMenu {...props} createCity={createCity} />);
+    const instance = wrapper.renderer._instance._instance;
+    instance._geoSuggest = {};
+    instance._geoSuggest.clear = jest.fn();
+    instance._geoSuggest.blur = jest.fn();
+
+    expect(instance.state.message).toBe(undefined);
+    expect(instance.state.snackbarOpen).toBe(false);
+
+    instance.onSuggestSelect({});
+    expect(instance.state.message).toBe("undefined doesn't exist.");
+    expect(instance.state.snackbarOpen).toBe(true);
+
+    instance.onSuggestSelect({ label: "Paris, France", placeId: "1" });
+    expect(instance.state.message).toBe(
+      "Paris, France is already in the list."
+    );
+  });
+
+  it("onSuggestSelect tests when one exists", async () => {
+    const createCity = jest.fn().mockReturnValue(Promise.resolve(true));
+
+    const wrapper = shallow(<SimpleMenu {...props} createCity={createCity} />);
+    const instance = wrapper.renderer._instance._instance;
+    instance._geoSuggest = {};
+    instance._geoSuggest.clear = jest.fn();
+    instance._geoSuggest.blur = jest.fn();
+
+    await instance.onSuggestSelect({
+      label: "Paris, France",
+      placeId: "2",
+      location: {
+        lat: 0,
+        lng: 0
+      }
+    });
+
+    expect(instance.state.message).toBe(
+      "Paris, France has been added to the list."
+    );
+  });
+
+  it("onSuggestSelect tests when error", async () => {
+    const createCity = jest
+      .fn()
+      .mockReturnValue(Promise.reject("rejecting promise"));
+
+    const wrapper = shallow(<SimpleMenu {...props} createCity={createCity} />);
+    const instance = wrapper.renderer._instance._instance;
+    instance._geoSuggest = {};
+    instance._geoSuggest.clear = jest.fn();
+    instance._geoSuggest.blur = jest.fn();
+
+    await instance.onSuggestSelect({
+      label: "Paris, France",
+      placeId: "2",
+      location: {
+        lat: 0,
+        lng: 0
+      }
+    });
+
+    expect(instance.state.message).toBe(undefined);
+  });
 });
