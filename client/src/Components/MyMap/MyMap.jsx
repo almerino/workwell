@@ -6,49 +6,65 @@ import * as d3 from "d3";
 import "leaflet/dist/leaflet.css";
 
 class MyMap extends Component {
-  componentWillUpdate({ data }) {
-    if (data.cities) {
+  constructor(props) {
+    super(props);
+    this.state = { cities: [] };
+    this.addToMap = this.addToMap.bind(this);
+  }
+
+  componentWillReceiveProps({ data }) {
+    if (!data.loading && data.cities.length) {
+      this.setState({
+        cities: data.cities
+      });
+    }
+  }
+
+  addToMap(cities) {
+    if (cities && cities.length) {
       const self = this;
-      const cities = [];
+      const newCities = [];
 
-      d3.select("g").remove();
-      this.g = this.svg.append("g");
+      d3.selectAll("g").remove();
+      self.g = self.svg.append("g");
 
-      if (data.cities.length) {
-        data.cities.forEach(function(d) {
-          const city = { ...d, LatLng: new L.LatLng(d.lat, d.lng) };
-          cities.push(city);
-          self.bounds.extend(city.LatLng);
+      cities.forEach(function(d) {
+        const city = { ...d, LatLng: new L.LatLng(d.lat, d.lng) };
+        newCities.push(city);
+        self.bounds.extend(city.LatLng);
+      });
+
+      const feature = self.g
+        .selectAll("circle")
+        .data(newCities)
+        .enter()
+        .append("circle")
+        .style("stroke", "black")
+        .style("opacity", 0.6)
+        .style("fill", "red")
+        .attr("r", 20);
+
+      self.map.on("moveend", update);
+      self.map.fitBounds(self.bounds);
+
+      update();
+
+      function update() {
+        feature.attr("transform", function(d) {
+          return (
+            "translate(" +
+            self.map.latLngToLayerPoint(d.LatLng).x +
+            "," +
+            self.map.latLngToLayerPoint(d.LatLng).y +
+            ")"
+          );
         });
-
-        const feature = self.g
-          .selectAll("circle")
-          .data(cities)
-          .enter()
-          .append("circle")
-          .style("stroke", "black")
-          .style("opacity", 0.6)
-          .style("fill", "red")
-          .attr("r", 20);
-
-        self.map.on("viewreset", update);
-        self.map.fitBounds(self.bounds);
-
-        update();
-
-        function update() {
-          feature.attr("transform", function(d) {
-            return (
-              "translate(" +
-              self.map.latLngToLayerPoint(d.LatLng).x +
-              "," +
-              self.map.latLngToLayerPoint(d.LatLng).y +
-              ")"
-            );
-          });
-        }
       }
     }
+  }
+
+  componentDidUpdate() {
+    this.addToMap(this.state.cities);
   }
 
   componentDidMount() {
@@ -59,14 +75,11 @@ class MyMap extends Component {
 
     this.mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; " + this.mapLink + " Contributors",
-      maxZoom: 14
+      attribution: "&copy; " + this.mapLink + " Contributors"
     }).addTo(this.map);
     L.control.zoom({ position: "bottomright" }).addTo(this.map);
-    // L.svg().addTo(this.map);
-    this.map._initPathRoot();
+    L.svg().addTo(this.map);
 
-    /* We simply pick up the SVG from the map object */
     this.svg = d3.select("#map").select("svg");
     this.g = this.svg.append("g");
 

@@ -5,7 +5,7 @@
   "dependencies": {
     "d3": "^4.9.1",
     "graphql-tag": "^2.4.2",
-    "leaflet": "^0.7.0",
+    "leaflet": "^1.1.0",
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-alpha.19",
     "prop-types": "^15.5.10",
