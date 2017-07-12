@@ -5,28 +5,14 @@ import Paper from "material-ui/Paper";
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";
-import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
 import Snackbar from "material-ui/Snackbar";
 import CloseIcon from "material-ui-icons/Close";
+import GeoSuggestItem from "../GeoSuggestItem/GeoSuggestItem";
 import createCityMutation from "../../GraphQL/Mutations/createCityMutation";
 import citiesQuery from "../../GraphQL/Queries/citiesQuery";
 import "./Menu.css";
-
-function renderSuggestItem(suggest) {
-  return (
-    <span className="geosuggest__suggested-item">
-      <span>
-        <IconButton color="accent" aria-label="Menu">
-          <AddLocationIcon />
-        </IconButton>
-      </span>
-      <span>
-        {suggest.label}
-      </span>
-    </span>
-  );
-}
+import "./GeoSuggest.css";
 
 class Menu extends Component {
   constructor(props) {
@@ -111,7 +97,7 @@ class Menu extends Component {
             ref={el => (this._geoSuggest = el)}
             types={["(cities)"]}
             placeholder="Paris, New York ..."
-            renderSuggestItem={renderSuggestItem}
+            renderSuggestItem={GeoSuggestItem}
             onSuggestSelect={this.onSuggestSelect}
           />
         </Paper>
@@ -151,19 +137,14 @@ class Menu extends Component {
   }
 }
 
-Menu.propTypes = {};
-
 export const SimpleMenu = Menu;
 
 export default graphql(createCityMutation, {
   name: "createCity",
   options: {
     update: (store, { data: { city } }) => {
-      // Read the data from our cache for this query.
       const data = store.readQuery({ query: citiesQuery });
-      // Add our comment from the mutation to the end.
       data.cities.push(city);
-      // Write our data back to the cache.
       store.writeQuery({ query: citiesQuery, data });
     }
   }

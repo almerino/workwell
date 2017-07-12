@@ -4,23 +4,24 @@
   "private": true,
   "dependencies": {
     "d3": "^4.9.1",
+    "enzyme": "^2.9.1",
     "graphql-tag": "^2.4.2",
+    "jest-cli": "^20.0.4",
     "leaflet": "^1.1.0",
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-alpha.19",
-    "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-apollo": "^1.4.3",
     "react-dom": "^15.6.1",
     "react-geosuggest": "^2.3.4",
     "react-leaflet": "^1.4.0",
-    "react-scripts": "1.0.10"
+    "react-scripts": "1.0.10",
+    "react-test-renderer": "^15.6.1"
   },
   "scripts": {
     "start": "REACT_APP_GRAPHQL_ENDPOINT=${REACT_APP_GRAPHQL_ENDPOINT:=https://api.graph.cool/simple/v1/cj4spe9mgnges0179f9uoo03a} react-scripts start",
     "build": "REACT_APP_GRAPHQL_ENDPOINT=${REACT_APP_GRAPHQL_ENDPOINT:=https://api.graph.cool/simple/v1/cj4spe9mgnges0179f9uoo03a} react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "devDependencies": {}
+  }
 }
