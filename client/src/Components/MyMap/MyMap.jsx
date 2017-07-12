@@ -12,7 +12,6 @@ class MyMap extends Component {
     super(props);
     this.state = { cities: [] };
     this.addToMap = this.addToMap.bind(this);
-    window.d3 = d3;
   }
 
   componentWillReceiveProps({ data }) {
@@ -27,6 +26,7 @@ class MyMap extends Component {
     if (cities) {
       const self = this;
       const newCities = [];
+      self.bounds = new L.LatLngBounds();
 
       self.g.selectAll("circle").remove();
 
@@ -86,8 +86,6 @@ class MyMap extends Component {
 
     this.svg = d3.select("#map").select("svg");
     this.g = this.svg.append("g");
-
-    this.bounds = new L.LatLngBounds();
   }
 
   render() {
