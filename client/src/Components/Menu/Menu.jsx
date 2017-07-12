@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { graphql } from "react-apollo";
-import gql from "graphql-tag";
 import Geosuggest from "react-geosuggest";
 import Paper from "material-ui/Paper";
 import Drawer from "material-ui/Drawer";
@@ -10,6 +9,7 @@ import AddLocationIcon from "material-ui-icons/AddLocation";
 import SideList from "../SideList/SideList";
 import Snackbar from "material-ui/Snackbar";
 import CloseIcon from "material-ui-icons/Close";
+import createCityMutation from "../../GraphQL/Mutations/createCityMutation";
 import citiesQuery from "../../GraphQL/Queries/citiesQuery";
 import "./Menu.css";
 
@@ -151,33 +151,11 @@ class Menu extends Component {
   }
 }
 
-const CreateCityQuery = gql`
-  mutation createCity(
-    $placeId: String!
-    $description: String!
-    $lat: Float!
-    $lng: Float!
-  ) {
-    city: createCity(
-      placeId: $placeId
-      description: $description
-      lat: $lat
-      lng: $lng
-    ) {
-      id
-      placeId
-      description
-      lat
-      lng
-    }
-  }
-`;
-
 Menu.propTypes = {};
 
 export const SimpleMenu = Menu;
 
-export default graphql(CreateCityQuery, {
+export default graphql(createCityMutation, {
   name: "createCity",
   options: {
     update: (store, { data: { city } }) => {
