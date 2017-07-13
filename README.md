@@ -1,7 +1,7 @@
 # NeverEatAlone Challenge
 [NeverEatAlone App](https://nevereataloneapp.herokuapp.com/)
 
-![](http://i.imgur.com/o4xNWGw.gif)
+![](http://i.imgur.com/QyyQaRm.gif)
 
 ### Install
 ```
