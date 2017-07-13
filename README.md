@@ -35,8 +35,6 @@ The client used along with GrapqQL is [Apollo](https://github.com/apollographql/
 [facebook](https://www.facebook.com/help/accessibility)
 ...
 
-----
-
 * The map itself is done using [leaflet.js](http://leafletjs.com/) along [d3.js](https://d3js.org/) for the layer displaying our custom markers.
 
 * A good alternative might be [mapbox-gl-js](https://www.mapbox.com/mapbox-gl-js/api/), we can find a small comparison  between the 2 [here](https://bl.ocks.org/almccon/ad6c2a4bac17e7b2ae49decf4a91fff7 ).
@@ -44,6 +42,7 @@ The client used along with GrapqQL is [Apollo](https://github.com/apollographql/
 * Also leaflet and mapbox seem to have already layers integrated that might be a good idea using it depending on the project need.
 
 ----
+
 ### Architecture
 #### Client
 * We have the main application with the providers, client at the top level of src/
@@ -55,15 +54,12 @@ Components are for the most part independant and can be loaded separatly.
 
 * All Queries for GraphQL are inside the GraphQL folder splitted between mutations and queries.
 
-----
 
 #### Server
-The main purpose of the server is to allow us to serve our assets and reload any pages.
-
-----
+* The main purpose of the server is to allow us to serve our assets and reload any pages.
 
 #### API
-As for the API we are using a backend as a service(MBaaS) [graph.cool](https://www.graph.cool/) to serve our data. The goal was to gain speed and avoid to develop a backend and still have data served as a graph.
+* As for the API we are using a backend as a service(MBaaS) [graph.cool](https://www.graph.cool/) to serve our data. The goal was to gain speed and avoid to develop a backend and still have data served as a graph.
 
 ----
 
