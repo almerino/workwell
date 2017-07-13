@@ -1,6 +1,8 @@
 # NeverEatAlone Challenge
 [NeverEatAlone App](https://nevereataloneapp.herokuapp.com/)
 
+![](http://i.imgur.com/o4xNWGw.gif)
+
 ### Install
 ```
 cd client
